@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>बाल वृद्धि जाँच</title>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.18) 0 8%, transparent 9%),
+        radial-gradient(circle at bottom right, rgba(255,255,255,0.12) 0 10%, transparent 11%),
+        linear-gradient(135deg,#ff8b2c 0%, #ff6a00 38%, #6b7cff 100%);
+    }
+
+    .phone{
+      width:100%;
+      max-width:390px;
+      min-height:780px;
+      border-radius:30px;
+      overflow:hidden;
+      background:rgba(255,255,255,0.16);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,0.28);
+      box-shadow:0 25px 60px rgba(0,0,0,0.25);
+    }
+
+    .screen{
+      display:none;
+      min-height:780px;
+      padding:20px 18px 28px;
+    }
+
+    .screen.active{
+      display:block;
+    }
+
+    .title{
+      text-align:center;
+      color:#fff;
+      font-size:28px;
+      font-weight:900;
+      margin:8px 0 18px;
+      text-shadow:0 4px 16px rgba(0,0,0,0.22);
+    }
+
+    .subtitle{
+      text-align:center;
+      color:#f5f5f5;
+      font-size:12px;
+      font-weight:700;
+      margin-top:-8px;
+      margin-bottom:16px;
+      line-height:1.4;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.82);
+      border:1px solid rgba(255,255,255,0.56);
+      box-shadow:0 10px 24px rgba(0,0,0,0.08);
+      border-radius:22px;
+      padding:16px;
+      margin-bottom:16px;
+    }
+
+    .label{
+      font-size:12px;
+      color:#666;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      margin-bottom:10px;
+    }
+
+    .genderWrap{
+      display:flex;
+      justify-content:center;
+      gap:20px;
+    }
+
+    .genderBox{
+      width:110px;
+      text-align:center;
+      cursor:pointer;
+    }
+
+    .genderBox input{
+      display:none;
+    }
+
+    .avatar{
+      width:78px;
+      height:78px;
+      margin:0 auto 8px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:38px;
+      background:linear-gradient(145deg,#ffffff,#ececec);
+      border:3px solid #d8d8d8;
+      position:relative;
+      transition:.2s;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .tick{
+      position:absolute;
+      right:-2px;
+      bottom:-2px;
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      background:#133d96;
+      color:#fff;
+      font-size:13px;
+      display:grid;
+      place-items:center;
+      border:2px solid #fff;
+      opacity:0;
+      transform:scale(.7);
+      transition:.2s;
+    }
+
+    .genderBox input:checked + .genderUI .avatar{
+      border-color:#3f6fe8;
+      box-shadow:0 0 0 5px rgba(63,111,232,.13);
+    }
+
+    .genderBox input:checked + .genderUI .tick{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    .genderName{
+      font-size:16px;
+      font-weight:800;
+      color:#222;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .fieldTitle{
+      font-size:12px;
+      color:#666;
+      font-weight:800;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    select,input[type="number"]{
+      width:100%;
+      height:50px;
+      border-radius:14px;
+      border:2px solid #dfe3ec;
+      background:#fff;
+      outline:none;
+      padding:0 14px;
+      font-size:18px;
+      font-weight:800;
+      color:#111;
+      transition:.2s;
+    }
+
+    select:focus,input[type="number"]:focus{
+      border-color:#4b74ec;
+      box-shadow:0 0 0 4px rgba(75,116,236,.12);
+    }
+
+    .helper{
+      margin-top:8px;
+      font-size:12px;
+      color:#666;
+      font-weight:700;
+      line-height:1.4;
+    }
+
+    .btn{
+      width:100%;
+      height:58px;
+      border:none;
+      border-radius:999px;
+      background:linear-gradient(135deg,#0d2d7a,#0a4abe);
+      color:#fff;
+      font-size:21px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 14px 24px rgba(10,74,190,.28);
+    }
+
+    .note{
+      margin-top:10px;
+      text-align:center;
+      color:#fff;
+      font-size:12px;
+      font-weight:700;
+      line-height:1.5;
+    }
+
+    .top{
+      background:linear-gradient(135deg,#5d7ee0,#456cd4);
+      margin:-20px -18px 16px;
+      padding:24px 18px 20px;
+      border-radius:0 0 26px 26px;
+      color:#fff;
+      box-shadow:0 12px 26px rgba(69,108,212,.24);
+    }
+
+    .topGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .miniLabel{
+      font-size:12px;
+      font-weight:700;
+      opacity:.92;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+
+    .miniValue{
+      font-size:28px;
+      font-weight:900;
+      line-height:1.1;
+    }
+
+    .miniValue.small{
+      font-size:21px;
+    }
+
+    .statusRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:14px 0;
+      border-bottom:1px solid #e7e7e7;
+    }
+
+    .statusRow:last-child{
+      border-bottom:none;
+    }
+
+    .statusLeft{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:19px;
+      color:#111;
+      flex-wrap:wrap;
+    }
+
+    .info{
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#111;
+      color:#fff;
+      display:grid;
+      place-items:center;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .badge{
+      padding:9px 12px;
+      border-radius:9px;
+      color:#fff;
+      font-size:13px;
+      font-weight:800;
+      white-space:nowrap;
+      text-align:center;
+    }
+
+    .danger{ background:#e61d1d; }
+    .warning{ background:#f2ae1c; }
+    .success{ background:#16a34a; }
+    .neutral{ background:#6b7280; }
+    .high{ background:#7c3aed; }
+
+    .extra{
+      margin-top:14px;
+      border-top:1px solid #ececec;
+      padding-top:14px;
+    }
+
+    .extra p{
+      font-size:13px;
+      color:#333;
+      line-height:1.6;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .backBtn{
+      width:150px;
+      height:54px;
+      border:none;
+      border-radius:999px;
+      display:block;
+      margin:18px auto 0;
+      background:linear-gradient(135deg,#0d2d7a,#0a4abe);
+      color:#fff;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 14px 24px rgba(10,74,190,.28);
+    }
+
+    .smallText{
+      margin-top:14px;
+      text-align:center;
+      color:#444;
+      font-size:12px;
+      font-weight:700;
+      line-height:1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="screen active" id="inputScreen">
+      <div class="title">बाल वृद्धि जाँच</div>
+      <div class="subtitle">0 से 5 वर्ष के बच्चों के लिए व्यावहारिक जाँच</div>
+
+      <div class="card">
+        <div class="label">लिंग *</div>
+        <div class="genderWrap">
+          <label class="genderBox">
+            <input type="radio" name="gender" value="Girl" checked>
+            <div class="genderUI">
+              <div class="avatar">👧<span class="tick">✓</span></div>
+              <div class="genderName">लड़की</div>
+            </div>
+          </label>
+
+          <label class="genderBox">
+            <input type="radio" name="gender" value="Boy">
+            <div class="genderUI">
+              <div class="avatar">👦<span class="tick">✓</span></div>
+              <div class="genderName">लड़का</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label">आयु *</div>
+        <div class="grid2">
+          <div>
+            <div class="fieldTitle">वर्ष</div>
+            <select id="years"></select>
+          </div>
+          <div>
+            <div class="fieldTitle">महीने</div>
+            <select id="months"></select>
+          </div>
+        </div>
+        <div class="helper">उपयुक्त सीमा: 0 से 5 वर्ष</div>
+      </div>
+
+      <div class="card">
+        <div style="margin-bottom:14px;">
+          <div class="fieldTitle">लंबाई / ऊँचाई (सेमी) *</div>
+          <input type="number" id="height" placeholder="सेमी में लंबाई लिखें" min="30" max="140" step="0.1">
+          <div class="helper">उदाहरण: 103.5</div>
+        </div>
+
+        <div>
+          <div class="fieldTitle">वज़न (किग्रा) *</div>
+          <input type="number" id="weight" placeholder="किग्रा में वज़न लिखें" min="1" max="50" step="0.1">
+          <div class="helper">उदाहरण: 16.2</div>
+        </div>
+      </div>
+
+      <button class="btn" id="showBtn">परिणाम देखें →</button>
+      <div class="note">यहाँ केवल typing input है। कम और ज्यादा दोनों मान जाँचे जाएँगे।</div>
+    </div>
+
+    <div class="screen" id="resultScreen">
+      <div class="top">
+        <div class="topGrid">
+          <div>
+            <div class="miniLabel">लिंग</div>
+            <div class="miniValue small" id="rGender">लड़का</div>
+          </div>
+          <div>
+            <div class="miniLabel">लंबाई</div>
+            <div class="miniValue" id="rHeight">0</div>
+          </div>
+          <div>
+            <div class="miniLabel">आयु</div>
+            <div class="miniValue small" id="rAge">0 वर्ष 0 माह</div>
+          </div>
+          <div>
+            <div class="miniLabel">वज़न</div>
+            <div class="miniValue small" id="rWeight">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="statusRow">
+          <div class="statusLeft"><span>नाटापन</span><span class="info">i</span></div>
+          <div class="badge neutral" id="stuntingBadge">-</div>
+        </div>
+
+        <div class="statusRow">
+          <div class="statusLeft"><span>कम वज़न</span><span class="info">i</span></div>
+          <div class="badge neutral" id="underweightBadge">-</div>
+        </div>
+
+        <div class="statusRow">
+          <div class="statusLeft"><span>कमज़ोरी</span><span class="info">i</span></div>
+          <div class="badge neutral" id="wastingBadge">-</div>
+        </div>
+
+        <div class="extra">
+          <p id="refText">संदर्भ: -</p>
+          <p id="summaryText">सारांश: -</p>
+        </div>
+      </div>
+
+      <button class="backBtn" id="backBtn">← वापस जाएँ</button>
+      <div class="smallText">
+        यह एक practical version है। official clinical use के लिए WHO tables अलग से जोड़नी होंगी।
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const yearsEl = document.getElementById("years");
+    const monthsEl = document.getElementById("months");
+    const heightEl = document.getElementById("height");
+    const weightEl = document.getElementById("weight");
+    const showBtn = document.getElementById("showBtn");
+    const backBtn = document.getElementById("backBtn");
+
+    const inputScreen = document.getElementById("inputScreen");
+    const resultScreen = document.getElementById("resultScreen");
+
+    const rGender = document.getElementById("rGender");
+    const rHeight = document.getElementById("rHeight");
+    const rWeight = document.getElementById("rWeight");
+    const rAge = document.getElementById("rAge");
+
+    const stuntingBadge = document.getElementById("stuntingBadge");
+    const underweightBadge = document.getElementById("underweightBadge");
+    const wastingBadge = document.getElementById("wastingBadge");
+
+    const refText = document.getElementById("refText");
+    const summaryText = document.getElementById("summaryText");
+
+    const boyHeight = [
+      49.9,54.7,58.4,61.4,63.9,65.9,67.6,69.2,70.6,72.0,73.3,74.5,
+      75.7,76.9,78.0,79.1,80.2,81.2,82.3,83.2,84.2,85.1,86.0,86.9,
+      87.8,88.7,89.6,90.4,91.2,92.0,92.8,93.6,94.4,95.1,95.9,96.6,
+      97.3,98.0,98.7,99.4,100.0,100.7,101.3,101.9,102.5,103.1,103.7,104.3,
+      104.9,105.4,106.0,106.5,107.1,107.6,108.1,108.6,109.1,109.6,110.1,110.6,111.0
+    ];
+
+    const girlHeight = [
+      49.1,53.7,57.1,59.8,62.1,64.0,65.7,67.3,68.7,70.1,71.5,72.8,
+      74.0,75.2,76.4,77.5,78.6,79.7,80.7,81.7,82.7,83.7,84.6,85.5,
+      86.4,87.3,88.2,89.0,89.8,90.6,91.4,92.2,92.9,93.7,94.4,95.1,
+      95.7,96.4,97.1,97.7,98.4,99.0,99.6,100.2,100.8,101.4,102.0,102.6,
+      103.1,103.7,104.2,104.8,105.3,105.8,106.3,106.8,107.3,107.8,108.2,108.7,109.1
+    ];
+
+    const boyWeight = [
+      3.3,4.5,5.6,6.4,7.0,7.5,7.9,8.3,8.6,8.9,9.2,9.4,
+      9.6,9.9,10.1,10.3,10.5,10.7,10.9,11.1,11.3,11.5,11.8,12.0,
+      12.2,12.4,12.6,12.8,13.0,13.2,13.4,13.6,13.8,14.0,14.2,14.3,
+      14.5,14.7,14.9,15.1,15.3,15.5,15.7,15.9,16.1,16.3,16.5,16.7,
+      16.9,17.1,17.3,17.5,17.7,17.9,18.1,18.3,18.5,18.7,18.9,19.1,19.3
+    ];
+
+    const girlWeight = [
+      3.2,4.2,5.1,5.8,6.4,6.9,7.3,7.6,7.9,8.2,8.5,8.7,
+      8.9,9.2,9.4,9.6,9.8,10.0,10.2,10.4,10.6,10.9,11.1,11.3,
+      11.5,11.7,11.9,12.1,12.3,12.5,12.7,12.9,13.1,13.3,13.5,13.7,
+      13.9,14.1,14.3,14.5,14.7,14.9,15.1,15.3,15.5,15.7,15.9,16.1,
+      16.3,16.5,16.7,16.9,17.1,17.3,17.5,17.7,17.9,18.1,18.3,18.5,18.7
+    ];
+
+    for (let i = 0; i <= 5; i++) {
+      const op = document.createElement("option");
+      op.value = i;
+      op.textContent = i;
+      yearsEl.appendChild(op);
+    }
+
+    for (let i = 0; i <= 11; i++) {
+      const op = document.createElement("option");
+      op.value = i;
+      op.textContent = i;
+      monthsEl.appendChild(op);
+    }
+
+    yearsEl.value = 4;
+    monthsEl.value = 0;
+    heightEl.value = 103;
+    weightEl.value = 16;
+
+    function setBadge(el, text, cls) {
+      el.textContent = text;
+      el.className = "badge " + cls;
+    }
+
+    function round1(x) {
+      return Number(x).toFixed(1).replace(".0", "");
+    }
+
+    function getMedianHeight(ageMonths, gender) {
+      return gender === "Boy" ? boyHeight[ageMonths] : girlHeight[ageMonths];
+    }
+
+    function getMedianWeight(ageMonths, gender) {
+      return gender === "Boy" ? boyWeight[ageMonths] : girlWeight[ageMonths];
+    }
+
+    function getExpectedWeightForHeight(height, ageMonths, gender) {
+      const medianHeight = getMedianHeight(ageMonths, gender);
+      const medianWeight = getMedianWeight(ageMonths, gender);
+      const perCm = ageMonths < 24 ? 0.23 : 0.28;
+      return medianWeight + ((height - medianHeight) * perCm);
+    }
+
+    function classifyHeightForAge(height, medianHeight) {
+      const ratio = height / medianHeight;
+
+      if (ratio < 0.88) return { text: "गंभीर नाटापन", cls: "danger" };
+      if (ratio < 0.94) return { text: "मध्यम नाटापन", cls: "warning" };
+      if (ratio > 1.14) return { text: "उम्र के अनुसार बहुत अधिक लंबाई", cls: "high" };
+      if (ratio > 1.08) return { text: "उम्र के अनुसार अधिक लंबाई", cls: "high" };
+      return { text: "सामान्य", cls: "success" };
+    }
+
+    function classifyWeightForAge(weight, medianWeight) {
+      const ratio = weight / medianWeight;
+
+      if (ratio < 0.72) return { text: "गंभीर कम वज़न", cls: "danger" };
+      if (ratio < 0.86) return { text: "मध्यम कम वज़न", cls: "warning" };
+      if (ratio > 1.45) return { text: "बहुत अधिक वज़न", cls: "high" };
+      if (ratio > 1.20) return { text: "उम्र के अनुसार अधिक वज़न", cls: "high" };
+      return { text: "सामान्य", cls: "success" };
+    }
+
+    function classifyWeightForHeight(weight, expectedWeightForHeight) {
+      const ratio = weight / expectedWeightForHeight;
+
+      if (ratio < 0.72) return { text: "गंभीर कमज़ोरी", cls: "danger" };
+      if (ratio < 0.86) return { text: "मध्यम कमज़ोरी", cls: "warning" };
+      if (ratio > 1.45) return { text: "बहुत अधिक / मोटापा", cls: "high" };
+      if (ratio > 1.20) return { text: "अधिक वज़न", cls: "high" };
+      return { text: "सामान्य", cls: "success" };
+    }
+
+    function getSummary(stunting, underweight, wasting) {
+      const all = [stunting.text, underweight.text, wasting.text];
+
+      if (all.some(v => v.includes("गंभीर"))) {
+        return "गंभीर वृद्धि समस्या दिख रही है।";
+      }
+      if (all.some(v => v.includes("मध्यम"))) {
+        return "मध्यम स्तर की वृद्धि समस्या दिख रही है।";
+      }
+      if (all.some(v => v.includes("अधिक") || v.includes("मोटापा") || v.includes("बहुत"))) {
+        return "ऊपरी सीमा की वृद्धि भिन्नता दिख रही है।";
+      }
+      return "वृद्धि सामान्य व्यावहारिक सीमा में दिख रही है।";
+    }
+
+    showBtn.addEventListener("click", () => {
+      const gender = document.querySelector('input[name="gender"]:checked').value;
+      const years = parseInt(yearsEl.value, 10);
+      const months = parseInt(monthsEl.value, 10);
+      const ageMonths = years * 12 + months;
+      const height = parseFloat(heightEl.value);
+      const weight = parseFloat(weightEl.value);
+
+      if (ageMonths < 0 || ageMonths > 60) {
+        alert("यह version 0 से 5 वर्ष के लिए है।");
+        return;
+      }
+
+      if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+        alert("कृपया लंबाई और वज़न सही से लिखें।");
+        return;
+      }
+
+      const medianHeight = getMedianHeight(ageMonths, gender);
+      const medianWeight = getMedianWeight(ageMonths, gender);
+      const expectedWeightForHeight = getExpectedWeightForHeight(height, ageMonths, gender);
+
+      const stunting = classifyHeightForAge(height, medianHeight);
+      const underweight = classifyWeightForAge(weight, medianWeight);
+      const wasting = classifyWeightForHeight(weight, expectedWeightForHeight);
+
+      rGender.textContent = gender === "Boy" ? "लड़का" : "लड़की";
+      rHeight.textContent = round1(height);
+      rWeight.textContent = round1(weight);
+      rAge.textContent = `${years} वर्ष ${months} माह`;
+
+      setBadge(stuntingBadge, stunting.text, stunting.cls);
+      setBadge(underweightBadge, underweight.text, underweight.cls);
+      setBadge(wastingBadge, wasting.text, wasting.cls);
+
+      refText.textContent =
+        `संदर्भ मान: ${years} वर्ष ${months} माह पर औसत लंबाई ${round1(medianHeight)} सेमी, औसत वज़न ${round1(medianWeight)} किग्रा`;
+
+      summaryText.textContent = `सारांश: ${getSummary(stunting, underweight, wasting)}`;
+
+      inputScreen.classList.remove("active");
+      resultScreen.classList.add("active");
+    });
+
+    backBtn.addEventListener("click", () => {
+      resultScreen.classList.remove("active");
+      inputScreen.classList.add("active");
+    });
+  </script>
+</body>
+</html>
